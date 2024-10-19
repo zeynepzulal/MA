@@ -14,6 +14,20 @@ const ThreeBodySimulation = () => {
         let body2 = { x: 500, y: 300, vx: 0, vy: -2, mass: 1000 };
         let body3 = { x: 400, y: 100, vx: 1.5, vy: 0, mass: 1000 };
 
+        const G = 0.1;
+        function calculateForces(bodyA,bodyB){
+            const dx = bodyB.x-bodyA.x;
+            const dy = bodyB.y-bodyA.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            const force = (G * bodyA.mass * bodyBmass) / (distance * distance);
+            
+            const ax = (force * dx) / (bodyA.mass * distance);
+            const ay = (force * dy) / (bodyA.mass * distance);
+            
+            return { ax, ay } ;
+            
+        }
+        
         drawBody(body1, 'blue');
         drawBody(body2, 'red');
         drawBody(body3, 'green');
