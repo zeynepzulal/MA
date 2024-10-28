@@ -10,13 +10,13 @@ const ThreeBodySimulation = () => {
         canvas.width = 800;
         canvas.height = 600;
 
-        let body1 = { x: 300, y: 300, vx: 0, vy: 2, mass: 1000 };
-        let body2 = { x: 500, y: 300, vx: 0, vy: -2, mass: 1000 };
-        let body3 = { x: 400, y: 100, vx: 1.5, vy: 0, mass: 1000 };
+        let body1 = { x: 300, y: 300, vx: 0, vy: 2, mass: 1000 , path:[]};
+        let body2 = { x: 500, y: 300, vx: 0, vy: -2, mass: 1000 , path: []};
+        let body3 = { x: 400, y: 100, vx: 1.5, vy: 0, mass: 1000, path: []};
 
         const G = 0.1;
+        const maxTrailLength = 100;
         
-
         function calculateForces(bodyA, bodyB) {
             const dx = bodyB.x - bodyA.x;
             const dy = bodyB.y - bodyA.y;
@@ -62,9 +62,25 @@ const ThreeBodySimulation = () => {
             body3.x += body3.vx;
             body3.y += body3.vy;
 
+            updateTrailAndDraw(body1, 'blue');
+            updateTrailAndDraw(body2, 'red');
+            updateTrailAndDraw(body3, 'green');
             drawBody(body1, 'blue');
             drawBody(body2, 'red');
             drawBody(body3, 'green');
+        }
+
+        function updateTrailAndDraw(body, color) {
+            body.path.push({ x: body.x, y: body.y });
+            if (body.path.length > maxTrailLength) body.path.shift();
+
+            context.strokeStyle = color;
+            context.beginPath();
+            for (let i = 0; i < body.path.length - 1; i++) {
+                context.moveTo(body.path[i].x, body.path[i].y);
+                context.lineTo(body.path[i + 1].x, body.path[i + 1].y);
+            }
+            context.stroke();
         }
 
         function drawBody(body, color) {

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef} from 'react'
+import React, { useEffect, useRef } from 'react'
 
 const TwoBodySimulation = () => {
 
@@ -11,15 +11,16 @@ const TwoBodySimulation = () => {
         canvas.width = 800;
         canvas.height = 600;
 
-        let body1 = { x: 300, y: 300, vx: 0, vy: 2, mass: 1000, };
+        let body1 = { x: 300, y: 300, vx: 0, vy: 2, mass: 1000, path: [] };
 
-        let body2 = { x: 500, y: 300, vx: 0, vy: -2, mass: 1000, };
+        let body2 = { x: 500, y: 300, vx: 0, vy: -2, mass: 1000, path: [] };
 
         const G = 0.05;
+        const maxTrailLength = 100;
 
         function update() {
 
-            context.clearRect(0,0,canvas.width, canvas.height);
+            context.clearRect(0, 0, canvas.width, canvas.height);
             //distance
             const dx = body2.x - body1.x;
             const dy = body2.y - body1.y;
@@ -41,24 +42,39 @@ const TwoBodySimulation = () => {
             body2.vy += ay2;
 
             //update position => new position = current position + v.t
-            body1.x += body1.vx; 
+            body1.x += body1.vx;
             body1.y += body1.vy;
             body2.x += body2.vx;
             body2.y += body2.vy;
 
+            updateTrailAndDraw(body1, ' blue');
+            updateTrailAndDraw(body2, 'red');
             drawBody(body1, 'blue');
             drawBody(body2, 'red');
         }
 
-        function drawBody(body ,color){
+        function updateTrailAndDraw(body, color) {
+            body.path.push({ x: body.x, y: body.y });
+            if (body.path.length > maxTrailLength) body.path.shift();
+
+            context.strokeStyle = color;
             context.beginPath();
-            context.arc(body.x,body.y,20,0,2* Math.PI);
+            for (let i = 0; i < body.path.length - 1; i++) {
+                context.moveTo(body.path[i].x, body.path[i].y);
+                context.lineTo(body.path[i + 1].x, body.path[i + 1].y);
+            }
+            context.stroke();
+        }
+
+        function drawBody(body, color) {
+            context.beginPath();
+            context.arc(body.x, body.y, 20, 0, 2 * Math.PI);
             context.fillStyle = color;
             context.fill();
             context.stroke();
         }
 
-        function animate(){
+        function animate() {
             update();
             requestAnimationFrame(animate);
         }
@@ -68,7 +84,7 @@ const TwoBodySimulation = () => {
 
 
 
-    return (<canvas ref={canvasRef} style={{border: '1px solid black'}}/>)
+    return (<canvas ref={canvasRef} style={{ border: '1px solid black' }} />)
 
 };
 
