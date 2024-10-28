@@ -53,12 +53,6 @@ const TwoBodySimulation = () => {
             body2.x += body2.vx;
             body2.y += body2.vy;
 
-            // boundries
-            if(body1.x <= 0 || body1.x >= canvas.width) body1.vx = -body1.vx;
-            if(body1.y <= 0 || body1.y >= canvas.height) body1.vy = -body1.vy;
-            if(body2.x <= 0 || body2.x >= canvas.width) body2.vx = -body2.vx;
-            if(body2.y <= 0 || body2.y >= canvas.height) body2.vy = -body2.vy;
-
             drawBody(body1, 'blue');
             drawBody(body2, 'red');
         }
