@@ -9,13 +9,38 @@ const ThreeBodySimulation = () => {
         const context = canvas.getContext('2d');
         canvas.width = 800;
         canvas.height = 600;
-
+/*
         let body1 = { x: 300, y: 300, vx: 0, vy: 2, mass: 1000 , path:[]};
         let body2 = { x: 500, y: 300, vx: 0, vy: -2, mass: 1000 , path: []};
         let body3 = { x: 400, y: 100, vx: 1.5, vy: 0, mass: 1000, path: []};
-
+*/
+// inital values for figure-8 from  https://www.youtube.com/watch?v=UC40kDpAI8M&list=LL&index=1&t=1032s
+        let body1 = { 
+            x: 400 + 0.97000436 * 200,   
+            y: 300 - 0.24308753 * 200, 
+            vx: 0.93240737 / 2, 
+            vy: 0.86473 / 2, 
+            mass: 1000,
+            path:[]
+        };
+        let body2 = { 
+            x: 400 - 0.97000436 * 200, 
+            y: 300 + 0.24308753 * 200, 
+            vx: 0.93240737 / 2, 
+            vy: 0.86473 / 2, 
+            mass: 1000,
+            path:[]
+        };
+        let body3 = { 
+            x: 400, 
+            y: 300, 
+            vx: -0.93240737, 
+            vy: -0.86473146, 
+            mass: 1000,
+            path:[]
+        };
         const G = 0.1;
-        const maxTrailLength = 100;
+        const maxTrailLength = 200;
         
         function calculateForces(bodyA, bodyB) {
             const dx = bodyB.x - bodyA.x;
