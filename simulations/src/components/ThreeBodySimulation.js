@@ -15,7 +15,7 @@ const ThreeBodySimulation = () => {
         let body3 = { x: 400, y: 100, vx: 1.5, vy: 0, mass: 1000 };
 
         const G = 0.1;
-    
+        
 
         function calculateForces(bodyA, bodyB) {
             const dx = bodyB.x - bodyA.x;
@@ -66,6 +66,7 @@ const ThreeBodySimulation = () => {
             drawBody(body2, 'red');
             drawBody(body3, 'green');
         }
+
         function drawBody(body, color) {
             context.beginPath();
             context.arc(body.x, body.y, 20, 0, 2 * Math.PI);

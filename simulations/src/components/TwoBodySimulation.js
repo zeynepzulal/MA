@@ -16,7 +16,6 @@ const TwoBodySimulation = () => {
         let body2 = { x: 500, y: 300, vx: 0, vy: -2, mass: 1000, };
 
         const G = 0.05;
-        const damping = 0.999;
 
         function update() {
 
@@ -40,12 +39,6 @@ const TwoBodySimulation = () => {
             body1.vy += ay1;
             body2.vx += ax2;
             body2.vy += ay2;
-
-            //damping
-            body1.vx *= damping;
-            body1.vy *= damping;
-            body2.vx *= damping;
-            body2.vy *= damping;
 
             //update position => new position = current position + v.t
             body1.x += body1.vx; 
