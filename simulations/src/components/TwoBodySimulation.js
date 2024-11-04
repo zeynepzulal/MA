@@ -15,16 +15,16 @@ const TwoBodySimulation = () => {
 
         let body2 = { x: 500, y: 300, vx: 0, vy: -2, mass: 1000, path: [] };
 
-        const G = 0.05;
+        const G = 0.1;
         const maxTrailLength = 100;
+        const softening = 0.1;
 
         function update() {
 
-            context.clearRect(0, 0, canvas.width, canvas.height);
             //distance
             const dx = body2.x - body1.x;
             const dy = body2.y - body1.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
+            const distance = Math.sqrt(dx * dx + dy * dy + softening);
 
             //gravitational force
             const force = (G * body1.mass * body2.mass) / (distance * distance);
@@ -46,14 +46,9 @@ const TwoBodySimulation = () => {
             body1.y += body1.vy;
             body2.x += body2.vx;
             body2.y += body2.vy;
-
-            updateTrailAndDraw(body1, ' blue');
-            updateTrailAndDraw(body2, 'red');
-            drawBody(body1, 'blue');
-            drawBody(body2, 'red');
         }
 
-        function updateTrailAndDraw(body, color) {
+        function drawPath(body, color) {
             body.path.push({ x: body.x, y: body.y });
             if (body.path.length > maxTrailLength) body.path.shift();
 
@@ -68,14 +63,18 @@ const TwoBodySimulation = () => {
 
         function drawBody(body, color) {
             context.beginPath();
-            context.arc(body.x, body.y, 20, 0, 2 * Math.PI);
+            context.arc(body.x, body.y, 10, 0, 2 * Math.PI);
             context.fillStyle = color;
             context.fill();
-            context.stroke();
         }
 
         function animate() {
+            context.clearRect(0, 0, canvas.width, canvas.height);
             update();
+            drawPath(body1, 'blue');
+            drawPath(body2, 'red');
+            drawBody(body1, 'blue');
+            drawBody(body2, 'red');
             requestAnimationFrame(animate);
         }
 
