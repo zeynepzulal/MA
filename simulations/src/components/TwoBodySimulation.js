@@ -69,6 +69,7 @@ const TwoBodySimulation = () => {
         }
 
         function animate() {
+        
             context.clearRect(0, 0, canvas.width, canvas.height);
             update();
             drawPath(body1, 'blue');
@@ -83,7 +84,7 @@ const TwoBodySimulation = () => {
 
 
 
-    return (<canvas ref={canvasRef} style={{ border: '1px solid black' }} />)
+    return (<canvas ref={canvasRef} style={{ border: '1px solid black', display: 'block', margin: '0 auto', background: 'black' }} />)
 
 };
 

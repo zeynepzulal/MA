@@ -12,7 +12,7 @@ const App = () => {
     <div>
       <button onClick={()=> setSimulationType('TwoBody')}>Two-Body Simulation</button>
       <button onClick={()=> setSimulationType('ThreeBody')}>Three-Body Simulation</button>
-      <button onClick={()=> setSimulationType('N-Body')}>N-Body Simulation</button>
+      <button onClick={()=> setSimulationType('NBody')}>N-Body Simulation</button>
 
       {simulationType === 'TwoBody' && <TwoBodySimulation/>}
       {simulationType === 'ThreeBody' && <ThreeBodySimulation/>}
