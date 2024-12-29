@@ -11,13 +11,13 @@ const TwoBodySimulation = () => {
         canvas.width = 800;
         canvas.height = 600;
 
-        let body1 = { x: 300, y: 300, vx: 0, vy: 2, mass: 1000, path: [] };
+        let body1 = { x: 350, y: 300, vx: 0, vy: 1.0, mass: 10000, path: [] };
 
-        let body2 = { x: 500, y: 300, vx: 0, vy: -2, mass: 1000, path: [] };
+        let body2 = { x: 450, y: 300, vx: 0, vy: -1.0, mass: 10000, path: [] };
 
         const G = 0.1;
         const maxTrailLength = 100;
-        const softening = 0.1;
+        const softening = 1.0;
 
         function update() {
 
@@ -68,6 +68,18 @@ const TwoBodySimulation = () => {
             context.fill();
         }
 
+        function drawCenterOfMass(){
+            const centerX = (body1.x * body1.mass + body2.x * body2.mass) / (body1.mass + body2.mass);
+            const centerY = (body1.y * body1.mass + body2.y * body2.mass) / (body1.mass + body2.mass);
+            context.strokeStyle = 'yellow';
+            context.beginPath();
+            context.moveTo(centerX - 10, centerY);
+            context.lineTo(centerX + 10, centerY);
+            context.moveTo(centerX, centerY - 10);
+            context.lineTo(centerX, centerY + 10);
+            context.stroke();
+        }
+
         function animate() {
         
             context.clearRect(0, 0, canvas.width, canvas.height);
@@ -76,6 +88,7 @@ const TwoBodySimulation = () => {
             drawPath(body2, 'red');
             drawBody(body1, 'blue');
             drawBody(body2, 'red');
+            drawCenterOfMass();
             requestAnimationFrame(animate);
         }
 
