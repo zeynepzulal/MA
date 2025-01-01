@@ -42,7 +42,7 @@ const ThreeBodySimulation = () => {
         function calculateForces(bodyA, bodyB) {
             const dx = bodyB.x - bodyA.x;
             const dy = bodyB.y - bodyA.y;
-            const distance = Math.sqrt(dx * dx + dy * dy + softening);
+            const distance = Math.sqrt(dx * dx + dy * dy + softening * softening);
             const force = (G * bodyA.mass * bodyB.mass) / (distance * distance);
 
             const ax = (force * dx) / (bodyA.mass * distance);

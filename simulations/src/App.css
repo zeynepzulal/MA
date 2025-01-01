@@ -5,6 +5,7 @@ body {
   background-color: #f4f4f4;
   margin: 0;
   padding: 20px;
+  background-image: url('./figures/bg.jpg');
 }
 
 button {

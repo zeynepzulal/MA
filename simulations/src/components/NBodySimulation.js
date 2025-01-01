@@ -1,7 +1,8 @@
 import React, { useRef, useEffect, useState } from 'react'
 
-const G = 6.67430e-11;
-const timeStep = 0.1; 
+const G = 0.1;
+const timeStep = 1;
+const softening = 1;
 
 class Body {
     constructor(x, y, mass, vx = 0, vy = 0) {
@@ -46,7 +47,7 @@ class QuadTree {
     }
 
     insert(body) {
-        if(!this.contains(body)) return false;
+        if (!this.contains(body)) return false;
 
         if (this.bodies.length < this.capacity) {
             this.bodies.push(body);
@@ -63,7 +64,7 @@ class QuadTree {
         );
     }
 
-    contains(body){
+    contains(body) {
         return (
             body.x >= this.boundary.x &&
             body.x <= this.boundary.x + this.boundary.width &&
@@ -75,49 +76,46 @@ class QuadTree {
     query(body, theta = 0.5) {
         const forces = { fx: 0, fy: 0 };
         if (!this.divided) {
-          this.bodies.forEach((other) => {
-            if (other !== body) {
-              const dx = other.x - body.x;
-              const dy = other.y - body.y;
-              const distance = Math.sqrt(dx * dx + dy * dy);
-              
-              const force = (G * body.mass * other.mass) / (distance * distance);
-              forces.fx += (force * dx) / distance;
-              forces.fy += (force * dy) / distance;
-            }
-          });
-          return forces;
+            this.bodies.forEach((other) => {
+                if (other !== body) {
+                    const dx = other.x - body.x;
+                    const dy = other.y - body.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy + softening * softening);
+                    const force = Math.min((G * body.mass * other.mass) / (distance * distance), 50);
+                    forces.fx += (force * dx) / distance;
+                    forces.fy += (force * dy) / distance;
+                }
+            });
+            return forces;
         }
-    
+
         const totalMass = this.bodies.reduce((acc, b) => acc + b.mass, 0);
         const centerOfMass = {
-          x: this.bodies.reduce((acc, b) => acc + b.x * b.mass, 0) / totalMass,
-          y: this.bodies.reduce((acc, b) => acc + b.y * b.mass, 0) / totalMass,
+            x: this.bodies.reduce((acc, b) => acc + b.x * b.mass, 0) / totalMass,
+            y: this.bodies.reduce((acc, b) => acc + b.y * b.mass, 0) / totalMass,
         };
-    
-        const distanceToCOM = Math.sqrt(
-          (centerOfMass.x - body.x) ** 2 + (centerOfMass.y - body.y) ** 2
-        );
-    
+
+        const distanceToCOM = Math.sqrt((centerOfMass.x - body.x) ** 2 + (centerOfMass.y - body.y) ** 2);
+
         if ((this.boundary.width / distanceToCOM) < theta) {
-          const force = (G * body.mass * totalMass) / (distanceToCOM * distanceToCOM);
-          const dx = centerOfMass.x - body.x;
-          const dy = centerOfMass.y - body.y;
-          forces.fx += (force * dx) / distanceToCOM;
-          forces.fy += (force * dy) / distanceToCOM;
+            const force = (G * body.mass * totalMass) / (distanceToCOM * distanceToCOM);
+            const dx = centerOfMass.x - body.x;
+            const dy = centerOfMass.y - body.y;
+            forces.fx += (force * dx) / distanceToCOM;
+            forces.fy += (force * dy) / distanceToCOM;
         } else {
-          forces.fx += this.northwest.query(body, theta).fx;
-          forces.fy += this.northwest.query(body, theta).fy;
-          forces.fx += this.northeast.query(body, theta).fx;
-          forces.fy += this.northeast.query(body, theta).fy;
-          forces.fx += this.southwest.query(body, theta).fx;
-          forces.fy += this.southwest.query(body, theta).fy;
-          forces.fx += this.southeast.query(body, theta).fx;
-          forces.fy += this.southeast.query(body, theta).fy;
+            forces.fx += this.northwest.query(body, theta).fx;
+            forces.fy += this.northwest.query(body, theta).fy;
+            forces.fx += this.northeast.query(body, theta).fx;
+            forces.fy += this.northeast.query(body, theta).fy;
+            forces.fx += this.southwest.query(body, theta).fx;
+            forces.fy += this.southwest.query(body, theta).fy;
+            forces.fx += this.southeast.query(body, theta).fx;
+            forces.fy += this.southeast.query(body, theta).fy;
         }
         return forces;
-      }
-   
+    }
+
 }
 
 
@@ -126,14 +124,19 @@ const NBodySimulation = () => {
     const [bodies, setBodies] = useState([]);
     const [isRunning, setIsRunning] = useState(false);
 
-    const addBody = () => {
-        const newBody = new Body(
-            Math.random() * 400,
-            Math.random() * 400,
-            Math.random() * 10 + 1,
-            (Math.random() - 0.5) * 2,
-            (Math.random() - 0.5) * 2
-        )
+    const addBody = (x, y) => {
+        const mass = 8000;
+        let vx = 0;
+        let vy = 0;
+
+        if (bodies.length === 0) {
+            vx = 0;
+            vy = -1;
+        } else if (bodies.length === 1) {
+            vx = 0;
+            vy = 1;
+        }
+        const newBody = new Body(x, y, mass, vx, vy);
         setBodies((prevBodies) => [...prevBodies, newBody]);
     }
 
@@ -141,35 +144,77 @@ const NBodySimulation = () => {
         setIsRunning(!isRunning);
     }
 
+    const handleCanvasClick = (e) => {
+        const rect = canvasRef.current.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        addBody(x, y);
+    }
+
+    const add50Bodies = () => {
+        for (let i = 0; i < 50; i++) {
+            addBody(Math.random() * 400, Math.random() * 400);
+        }
+    }
+
+    const resetSimulation = () => {
+        setBodies([]);
+    }
+
     useEffect(() => {
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
-        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'black';
+        canvas.style.backgroundColor = 'black';
 
         bodies.forEach((body) => {
             ctx.beginPath();
-            ctx.arc(body.x, body.y, 4, 0, 2 * Math.PI);
-            ctx.fillStyle = 'blue';
+            ctx.arc(body.x, body.y, 5, 0, 2 * Math.PI);
+            ctx.fillStyle = 'red';
             ctx.fill();
         });
+
+        if (bodies.length > 0) {
+            const totalMass = bodies.reduce((sum, body) => sum + body.mass, 0);
+            const centerOfMass = bodies.reduce(
+                (acc, body) => {
+                    acc.x += body.x * body.mass;
+                    acc.y += body.y * body.mass;
+                    return acc;
+                },
+                { x: 0, y: 0 }
+            );
+            centerOfMass.x /= totalMass;
+            centerOfMass.y /= totalMass;
+
+            // Massenschwerpunkt zeichnen
+            ctx.strokeStyle = 'yellow';
+            ctx.beginPath();
+            ctx.moveTo(centerOfMass.x - 5, centerOfMass.y);
+            ctx.lineTo(centerOfMass.x + 5, centerOfMass.y);
+            ctx.moveTo(centerOfMass.x, centerOfMass.y - 5);
+            ctx.lineTo(centerOfMass.x, centerOfMass.y + 5);
+            ctx.stroke();
+        }
 
     }, [bodies]);
 
     useEffect(() => {
         const interval = setInterval(() => {
             if (isRunning && bodies.length > 0) {
-               
+
                 const boundary = { x: 0, y: 0, width: 400, height: 400 };
                 const quadTree = new QuadTree(boundary, 4);
 
                 bodies.forEach((body) => quadTree.insert(body));
-                
+
                 bodies.forEach((body) => {
                     const forces = quadTree.query(body);
                     body.applyForce(forces.fx, forces.fy);
                     body.updatePosition();
                 })
-                
+
                 setBodies([...bodies]);
             }
         }, 16);
@@ -178,10 +223,14 @@ const NBodySimulation = () => {
 
 
     return (
-        <div>
-            <canvas ref={canvasRef} width={400} height={400} style={{ border: '1px solid black' }} />
-            <button onClick={addBody}>Add Body</button>
-            <button onClick={toggleSimulation}> {isRunning ? 'Stop' : 'Start'} Simulation</button>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <p style={{color: 'red'}}>Click to add a body</p>
+            <canvas ref={canvasRef} width={500} height={500} style={{ border: '1px solid white' }} onClick={handleCanvasClick} />
+            <div style={{ marginTop: '10px' }}>
+                <button onClick={toggleSimulation}> {isRunning ? 'Stop' : 'Start'} Simulation</button>
+                <button onClick={add50Bodies}>Add 50 Bodies</button>
+                <button onClick={resetSimulation}>Reset</button>
+            </div>
         </div>
     )
 }

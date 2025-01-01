@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import TwoBodySimulation from './components/TwoBodySimulation';
 import ThreeBodySimulation from './components/ThreeBodySimulation';
@@ -9,14 +9,17 @@ const App = () => {
   const [simulationType, setSimulationType] = useState((null));
 
   return (
-    <div>
-      <button onClick={()=> setSimulationType('TwoBody')}>Two-Body Simulation</button>
-      <button onClick={()=> setSimulationType('ThreeBody')}>Three-Body Simulation</button>
-      <button onClick={()=> setSimulationType('NBody')}>N-Body Simulation</button>
+    <div className='container-btn'>
+      <button onClick={() => setSimulationType('TwoBody')}>Two-Body Simulation</button>
+      <button onClick={() => setSimulationType('ThreeBody')}>Three-Body Simulation</button>
+      <button onClick={() => setSimulationType('NBody')}>N-Body Simulation</button>
 
-      {simulationType === 'TwoBody' && <TwoBodySimulation/>}
-      {simulationType === 'ThreeBody' && <ThreeBodySimulation/>}
-      {simulationType === 'NBody' && <NBodySimulation/>}
+
+      {simulationType === 'TwoBody' && <TwoBodySimulation />}
+      {simulationType === 'ThreeBody' && <ThreeBodySimulation />}
+      {simulationType === 'NBody' && <NBodySimulation />}
+
+
     </div>
   )
 

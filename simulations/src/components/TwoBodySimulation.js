@@ -24,7 +24,7 @@ const TwoBodySimulation = () => {
             //distance
             const dx = body2.x - body1.x;
             const dy = body2.y - body1.y;
-            const distance = Math.sqrt(dx * dx + dy * dy + softening);
+            const distance = Math.sqrt(dx * dx + dy * dy + softening * softening);
 
             //gravitational force
             const force = (G * body1.mass * body2.mass) / (distance * distance);
