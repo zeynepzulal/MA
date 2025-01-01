@@ -11,12 +11,12 @@ const TwoBodySimulation = () => {
         canvas.width = 800;
         canvas.height = 600;
 
-        let body1 = { x: 350, y: 300, vx: 0, vy: 1.0, mass: 10000, path: [] };
+        let body1 = { x: 300, y: 300, vx: 0, vy: 1.0, mass: 8000, path: [] };
 
-        let body2 = { x: 450, y: 300, vx: 0, vy: -1.0, mass: 10000, path: [] };
+        let body2 = { x: 500, y: 300, vx: 0, vy: -1.0, mass: 8000, path: [] };
 
         const G = 0.1;
-        const maxTrailLength = 100;
+        const maxTrailLength = 200;
         const softening = 1.0;
 
         function update() {

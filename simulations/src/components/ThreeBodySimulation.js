@@ -6,11 +6,10 @@ const ThreeBodySimulation = () => {
     const [initialCondition, setInitialCondition] = useState('figureEight')
 
     const InitialConditions = {
-        // inital values for figure-8 from  https://www.youtube.com/watch?v=UC40kDpAI8M&list=LL&index=1&t=1032s
         figureEight: [
-            { x: 400 + 0.97000436 * 200, y: 300 - 0.24308753 * 200, vx: 0.93240737 / 2, vy: 0.86473146 / 2, mass: 1000 },
-            { x: 400 - 0.97000436 * 200, y: 300 + 0.24308753 * 200, vx: 0.93240737 / 2, vy: 0.86473146 / 2, mass: 1000 },
-            { x: 400, y: 300, vx: -0.93240737, vy: -0.86473146, mass: 1000 }
+            { x: 400 + 0.97000436 * 200, y: 300 - 0.24308753 * 200, vx: -0.93240737, vy: -0.86473146, mass: 8000 },
+            { x: 400 - 0.97000436 * 200, y: 300 + 0.24308753 * 200, vx: -0.93240737, vy: -0.86473146, mass: 8000 },
+            { x: 400, y: 300, vx: 2 * 0.93240737, vy: 2 * 0.86473146, mass: 8000}
         ]
     };
 
@@ -38,7 +37,7 @@ const ThreeBodySimulation = () => {
         path3 = [];
 
         const G = 0.1;
-        const softening = 0.1;
+        const softening = 1.0;
 
         function calculateForces(bodyA, bodyB) {
             const dx = bodyB.x - bodyA.x;
@@ -96,7 +95,7 @@ const ThreeBodySimulation = () => {
 
         function drawBody(body, color) {
             context.beginPath();
-            context.arc(body.x, body.y, 3, 0, 2 * Math.PI);
+            context.arc(body.x, body.y, 6, 0, 2 * Math.PI);
             context.fillStyle = color;
             context.shadowColor = color;
             context.shadowBlur = 10;
