@@ -95,7 +95,7 @@ class QuadTree {
             y: this.bodies.reduce((acc, b) => acc + b.y * b.mass, 0) / totalMass,
         };
 
-        const distanceToCOM = Math.sqrt((centerOfMass.x - body.x) ** 2 + (centerOfMass.y - body.y) ** 2);
+        const distanceToCOM = Math.sqrt((centerOfMass.x - body.x) ** 2 + (centerOfMass.y - body.y) ** 2 + softening * softening);
 
         if ((this.boundary.width / distanceToCOM) < theta) {
             const force = (G * body.mass * totalMass) / (distanceToCOM * distanceToCOM);
@@ -225,7 +225,7 @@ const NBodySimulation = () => {
     return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <p style={{color: 'red'}}>Click to add a body</p>
-            <canvas ref={canvasRef} width={500} height={500} style={{ border: '1px solid white' }} onClick={handleCanvasClick} />
+            <canvas ref={canvasRef} width={400} height={400} style={{ border: '1px solid white' }} onClick={handleCanvasClick} />
             <div style={{ marginTop: '10px' }}>
                 <button onClick={toggleSimulation}> {isRunning ? 'Stop' : 'Start'} Simulation</button>
                 <button onClick={add50Bodies}>Add 50 Bodies</button>
